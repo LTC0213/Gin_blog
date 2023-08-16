@@ -10,6 +10,7 @@ import (
 
 type Manager interface {
 	AddUser(user *model.User)
+	Login(username string) model.User
 	FindAllUser()
 }
 
@@ -31,6 +32,11 @@ func init() {
 
 func (mgr *manager) AddUser(user *model.User) {
 	mgr.db.Create(user)
+}
+
+func (mgr *manager) Login(username string) (user model.User) {
+	mgr.db.Where("username=?", username).First(&user)
+	return user
 }
 
 func (mgr *manager) FindAllUser() {
