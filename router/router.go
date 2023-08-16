@@ -17,5 +17,10 @@ func Start() {
 
 	e.GET("/login", controller.Gologin)
 	e.POST("/login", controller.Login)
+
+	e.GET("/post_index", controller.GetPostIndex)
+	e.GET("/post", controller.GoAddPost)
+	e.POST("/post", controller.AddPost)
+	e.GET("/post_detail", controller.PostDetail)
 	e.Run()
 }

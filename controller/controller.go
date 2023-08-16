@@ -5,6 +5,9 @@ import (
 	"Gin_blog/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/russross/blackfriday/v2"
+	"html/template"
+	"strconv"
 )
 
 func RegisterUser(c *gin.Context) {
@@ -57,3 +60,40 @@ func Index(c *gin.Context) {
 /*func ListUser(c *gin.Context) {
 	c.HTML(200, "userlist.html", nil)
 }*/
+
+func GetPostIndex(c *gin.Context) {
+	posts := dao.Mgr.GetAllPost()
+	c.HTML(200, "postIndex.html", posts)
+}
+
+func AddPost(c *gin.Context) {
+	title := c.PostForm("title")
+	tag := c.PostForm("tag")
+	content := c.PostForm("content")
+
+	post := model.Post{
+		Title:   title,
+		Content: content,
+		Tag:     tag,
+	}
+
+	dao.Mgr.AddPost(&post)
+	c.Redirect(302, "/post_index")
+}
+
+func GoAddPost(c *gin.Context) {
+	c.HTML(200, "post.html", nil)
+}
+
+func PostDetail(c *gin.Context) {
+	s := c.Query("pid")
+	pid, _ := strconv.Atoi(s)
+	p := dao.Mgr.GetPost(pid)
+
+	content := blackfriday.Run([]byte(p.Content))
+
+	c.HTML(200, "detail.html", gin.H{
+		"Title":   p.Title,
+		"Content": template.HTML(content),
+	})
+}

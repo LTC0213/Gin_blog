@@ -12,6 +12,10 @@ type Manager interface {
 	AddUser(user *model.User)
 	Login(username string) model.User
 	FindAllUser()
+
+	AddPost(post *model.Post)
+	GetAllPost() []model.Post
+	GetPost(pid int) model.Post
 }
 
 type manager struct {
@@ -28,6 +32,7 @@ func init() {
 	}
 	Mgr = &manager{db: db}
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Post{})
 }
 
 func (mgr *manager) AddUser(user *model.User) {
@@ -45,4 +50,19 @@ func (mgr *manager) FindAllUser() {
 	for _, user := range users {
 		fmt.Println(user)
 	}
+}
+
+func (mgr *manager) AddPost(post *model.Post) {
+	mgr.db.Create(post)
+}
+
+func (mgr *manager) GetAllPost() []model.Post {
+	posts := []model.Post{}
+	mgr.db.Find(&posts)
+	return posts
+}
+
+func (mgr *manager) GetPost(pid int) (post model.Post) {
+	mgr.db.First(&post, pid)
+	return post
 }
